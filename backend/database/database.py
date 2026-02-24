@@ -7,15 +7,22 @@ from sqlalchemy import DateTime, create_engine, Column, Integer, String, Foreign
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-
+"""
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "app.db"
 
 engine = create_engine(f"sqlite:///{DB_PATH}")
-Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
+"""
 
+SERVER = "localhost"
+DATABASE = "Test"
+
+DATABASE_URL = f"mssql+pyodbc://@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
+Base = declarative_base()
+engine = create_engine(DATABASE_URL)
+Session = sessionmaker(bind=engine)
 
 class Formation(Base):
     """
