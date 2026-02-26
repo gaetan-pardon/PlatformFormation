@@ -6,6 +6,7 @@ from pathlib import Path
 from sqlalchemy import DateTime, create_engine, Column, Integer, String, ForeignKey, TIMESTAMP
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import sessionmaker, declarative_base
+#import pyodbc
 
 """
 BASE_DIR = Path(__file__).resolve().parent
@@ -159,4 +160,4 @@ class Evaluations(Base):
     resultatDate = Column(TIMESTAMP, nullable=True)
 
 
-Base.metadata.create_all(engine)
+#Base.metadata.create_all(engine)
