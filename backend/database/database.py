@@ -18,7 +18,7 @@ session = Session()
 """
 
 SERVER = "localhost"
-DATABASE = "Test"
+DATABASE = "PlateformFormation"
 
 DATABASE_URL = f"mssql+pyodbc://@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
 Base = declarative_base()
