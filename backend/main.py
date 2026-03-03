@@ -89,9 +89,9 @@ async def get_all_recommandations(current_user : str = Depends(get_current_user)
     return  {"recommandations": [f for f in recommandations]}
 
 @app.post("/RecommandationsGenereesparLIA/new")
-async def create_new_recommandation(utilisateur_id: int , idFormation: int , current_user : str = Depends(get_current_user)):
+async def create_new_recommandation(idUtilisateur: int , idFormation: int , current_user : str = Depends(get_current_user)):
     session = Session()
-    recommandation = RecommandationsGenereesparLIA(utilisateur_id=utilisateur_id, idFormation=idFormation, dateHeureRecommandation=datetime.now())
+    recommandation = RecommandationsGenereesparLIA(idUtilisateur=idUtilisateur, idFormation=idFormation, dateHeureRecommandation=datetime.now())
     session.add(recommandation)
     session.commit()
     return {"message": "Recommandation créée avec succès"}
