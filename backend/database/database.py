@@ -51,7 +51,7 @@ class SessionDeFormation(Base):
     """
     __tablename__ = 'SessionDeFormation'
     idSession = Column(Integer, primary_key=True, autoincrement=True)
-    idFormation = Column(Integer, ForeignKey('formations.idFormation'), nullable=False)
+    idFormation = Column(Integer, ForeignKey('Formations.idFormation'), nullable=False)
     dateDeDebut = Column(DateTime, nullable=False)
     dateDeFin = Column(DateTime, nullable=False)
 
@@ -71,7 +71,7 @@ class Utilisateur(Base):
     prenomUtilisateur = Column(String, nullable=False)
     INEUtilisateur = Column(String, nullable=False, unique=True)
     dateDeNaissance = Column(DateTime, nullable=False)
-    idSession = Column(Integer, ForeignKey('sessions_de_formation.idSession'), nullable=True)
+    idSession = Column(Integer, ForeignKey('SessionDeFormation.idSession'), nullable=True)
 
 class RecommandationsGenereesparLIA(Base):
     """
@@ -85,8 +85,8 @@ class RecommandationsGenereesparLIA(Base):
     """
     __tablename__ = 'RecommandationsgenereesparLIA'
     idRecommandationsGenereesParLIA = Column(Integer, primary_key=True, autoincrement=True)
-    idUtilisateur = Column(Integer, ForeignKey('utilisateurs.idUtilisateur'), nullable=False)
-    idFormation = Column(Integer, ForeignKey('formations.idFormation'), nullable=False)
+    idUtilisateur = Column(Integer, ForeignKey('Utilisateurs.idUtilisateur'), nullable=False)
+    idFormation = Column(Integer, ForeignKey('Formations.idFormation'), nullable=False)
     dateHeureRecommandation = Column(TIMESTAMP, nullable=False)
 
 class Inscription(Base):
@@ -100,8 +100,8 @@ class Inscription(Base):
         date_inscription (datetime): Date et heure de l'inscription
     """
     __tablename__ = 'Inscriptions'
-    idUtilisateur = Column(Integer, ForeignKey('utilisateurs.idUtilisateur'),primary_key=True , nullable=False)
-    idFormation = Column(Integer, ForeignKey('formations.idFormation'),primary_key=True , nullable=False)
+    idUtilisateur = Column(Integer, ForeignKey('Utilisateurs.idUtilisateur'),primary_key=True , nullable=False)
+    idFormation = Column(Integer, ForeignKey('Formations.idFormation'),primary_key=True , nullable=False)
     dateDInscription = Column(TIMESTAMP, nullable=False)
 
 class ModulesDeFormation(Base):
@@ -130,8 +130,8 @@ class ComposerLaFormationDeModule (Base):
         module_id (int): Identifiant du module associé à la formation
     """
     __tablename__ = 'ComposerLaFormationDeModule'
-    idFormation = Column(Integer, ForeignKey('formations.idFormation'),primary_key=True , nullable=False)
-    idModuleDeFormation = Column(Integer, ForeignKey('modules_de_formation.idModuleDeFormation'),primary_key=True , nullable=False)
+    idFormation = Column(Integer, ForeignKey('Formations.idFormation'),primary_key=True , nullable=False)
+    idModuleDeFormation = Column(Integer, ForeignKey('ModulesDeFormation.idModuleDeFormation'),primary_key=True , nullable=False)
 
 class Evaluations(Base):
     """
@@ -150,8 +150,8 @@ class Evaluations(Base):
     """
     __tablename__ = 'Evaluations'
     idEvaluation = Column(Integer, primary_key=True, autoincrement=True)
-    idUtilisateur = Column(Integer, ForeignKey('utilisateurs.idUtilisateur'), nullable=False)
-    idModuleDeFormation = Column(Integer, ForeignKey('modules_de_formation.idModuleDeFormation'), nullable=False)
+    idUtilisateur = Column(Integer, ForeignKey('Utilisateurs.idUtilisateur'), nullable=False)
+    idModuleDeFormation = Column(Integer, ForeignKey('ModulesDeFormation.idModuleDeFormation'), nullable=False)
     nomDeLEvaluation = Column(String, nullable=False)
     modaliteDeLEvaluation = Column(String, nullable=False)
     dateDeDebutDeLEvaluation = Column(TIMESTAMP, nullable=False)

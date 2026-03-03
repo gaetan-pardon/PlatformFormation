@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from utils.jwtConfig import create_access_token, get_current_user, verify_access_token
 from request.requestLogin import RequestLogin
-
+from datetime import datetime
 
 from dotenv import dotenv_values
 
@@ -35,6 +35,14 @@ async def get_all_formations(current_user : str = Depends(get_current_user)):
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"formations": [f for f in formations]}
 
+@app.post("/formations/new")
+async def create_new_formation(nomFormation: str , descriptionFormation: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    formation = Formation(nomFormation=nomFormation, descriptionFormation=descriptionFormation)
+    session.add(formation)
+    session.commit()
+    return {"message": "Formation créée avec succès"}
+
 @app.get("/SessionDeFormation/all")
 async def get_all_session_de_formation(current_user : str = Depends(get_current_user)):
     #print(f"Utilisateur connecté : {current_user}")
@@ -44,6 +52,13 @@ async def get_all_session_de_formation(current_user : str = Depends(get_current_
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"sessionsDeformations": [f for f in sessionsDeformations]}
 
+@app.post("/SessionDeFormation/new")
+async def create_new_session_de_formation( idFormation: int , dateDeDebut: str , dateDeFin: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    sessionDeFormation = SessionDeFormation(idFormation=idFormation, dateDeDebut=dateDeDebut, dateDeFin=dateDeFin)
+    session.add(sessionDeFormation)
+    session.commit()
+    return {"message": "Session de formation créée avec succès"}
 
 @app.get("/Utilisateur/all")
 async def get_all_utilisateurs(current_user : str = Depends(get_current_user)):
@@ -54,6 +69,15 @@ async def get_all_utilisateurs(current_user : str = Depends(get_current_user)):
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"utilisateurs": [f for f in utilisateurs]}
 
+@app.post("/Utilisateur/new")
+async def create_new_utilisateur(nomUtilisateur: str , prenomUtilisateur: str , INEUtilisateur: str , dateDeNaissance: str , idSession: int  , current_user : str = Depends(get_current_user)):
+    session = Session()
+    utilisateur = Utilisateur(nomUtilisateur=nomUtilisateur, prenomUtilisateur=prenomUtilisateur, INEUtilisateur=INEUtilisateur, dateDeNaissance=dateDeNaissance, idSession=idSession)
+    session.add(utilisateur)
+    session.commit()
+    return {"message": "Utilisateur créé avec succès"}
+
+
 
 @app.get("/RecommandationsGenereesparLIA/all")
 async def get_all_recommandations(current_user : str = Depends(get_current_user)):
@@ -63,6 +87,14 @@ async def get_all_recommandations(current_user : str = Depends(get_current_user)
     recommandations = session.scalars(stmt)
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"recommandations": [f for f in recommandations]}
+
+@app.post("/RecommandationsGenereesparLIA/new")
+async def create_new_recommandation(utilisateur_id: int , idFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    recommandation = RecommandationsGenereesparLIA(utilisateur_id=utilisateur_id, idFormation=idFormation, dateHeureRecommandation=datetime.now())
+    session.add(recommandation)
+    session.commit()
+    return {"message": "Recommandation créée avec succès"}
 
 
 @app.get("/Inscription/all")
