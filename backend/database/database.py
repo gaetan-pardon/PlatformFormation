@@ -118,7 +118,7 @@ class ModulesDeFormation(Base):
     idModuleDeFormation = Column(Integer, primary_key=True, autoincrement=True)
     #idFormation = Column(Integer, ForeignKey('formations.idFormation'), nullable=False)
     nomModule = Column(String, nullable=False)
-    description = Column(String, nullable=True)
+    descriptionModule = Column(String, nullable=True)
 
 class ComposerLaFormationDeModule (Base):
     """

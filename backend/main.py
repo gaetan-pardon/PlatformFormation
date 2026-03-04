@@ -106,6 +106,13 @@ async def get_all_inscriptions(current_user : str = Depends(get_current_user)):
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"inscriptions": [f for f in inscriptions]}
 
+@app.post("/Inscription/new")
+async def create_new_inscription(idUtilisateur: int , idFormation: int , dateDInscription: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    inscription = Inscription(idUtilisateur=idUtilisateur, idFormation=idFormation, dateDInscription=dateDInscription)
+    session.add(inscription)
+    session.commit()
+    return {"message": "Inscription créée avec succès"}
 
 @app.get("/ModulesDeFormation/all")
 async def get_all_modules_de_formation(current_user : str = Depends(get_current_user)):
@@ -116,6 +123,35 @@ async def get_all_modules_de_formation(current_user : str = Depends(get_current_
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"modulesDeFormation": [f for f in formations]}
 
+@app.post("/ModulesDeFormation/new")
+async def create_new_module_de_formation(nomModule: str , descriptionModule: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    moduleDeFormation = ModulesDeFormation(nomModule=nomModule, descriptionModule=descriptionModule)
+    session.add(moduleDeFormation)
+    session.commit()
+    return {"message": "Module de formation créé avec succès"}
+
+@app.patch("/ModulesDeFormation/patch")
+async def update_module_de_formation(idModuleDeFormation: int , nomModule: str , descriptionModule: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    moduleDeFormation = session.query(ModulesDeFormation).filter(ModulesDeFormation.idModuleDeFormation == idModuleDeFormation).first()
+    if moduleDeFormation is None:
+        raise HTTPException(status_code=404, detail="Module de formation non trouvé")
+    moduleDeFormation.nomModule = nomModule
+    moduleDeFormation.descriptionModule = descriptionModule
+    session.commit()
+    return {"message": "Module de formation mis à jour avec succès"}
+
+@app.delete("/ModulesDeFormation/delete")
+async def delete_module_de_formation(idModuleDeFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    moduleDeFormation = session.query(ModulesDeFormation).filter(ModulesDeFormation.idModuleDeFormation == idModuleDeFormation).first()
+    if moduleDeFormation is None:
+        raise HTTPException(status_code=404, detail="Module de formation non trouvé")
+    session.delete(moduleDeFormation)
+    session.commit()
+    return {"message": "Module de formation supprimé avec succès"}
+
 @app.get("/ComposerLaFormationDeModule/all")
 async def get_all_composer_la_formation_de_module(current_user : str = Depends(get_current_user)):
     #print(f"Utilisateur connecté : {current_user}")
@@ -125,6 +161,24 @@ async def get_all_composer_la_formation_de_module(current_user : str = Depends(g
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"composerLaFormationDeModule": [f for f in formations]}
 
+@app.post("/ComposerLaFormationDeModule/new")
+async def create_new_composer_la_formation_de_module(idFormation: int , idModuleDeFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    composerLaFormationDeModule = ComposerLaFormationDeModule(idFormation=idFormation, idModuleDeFormation=idModuleDeFormation)
+    session.add(composerLaFormationDeModule)
+    session.commit()
+    return {"message": "Association entre formation et module créée avec succès"}
+
+@app.delete("/ComposerLaFormationDeModule/delete")
+async def delete_composer_la_formation_de_module(idFormation: int , idModuleDeFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    association = session.query(ComposerLaFormationDeModule).filter(ComposerLaFormationDeModule.idFormation == idFormation, ComposerLaFormationDeModule.idModuleDeFormation == idModuleDeFormation).first()
+    if association is None:
+        raise HTTPException(status_code=404, detail="Association non trouvée")
+    session.delete(association)
+    session.commit()
+    return {"message": "Association entre formation et module supprimée avec succès"}
+
 @app.get("/Evaluations/all")
 async def get_all_evaluations(current_user : str = Depends(get_current_user)):
     #print(f"Utilisateur connecté : {current_user}")
@@ -133,6 +187,50 @@ async def get_all_evaluations(current_user : str = Depends(get_current_user)):
     evaluations = session.scalars(stmt)
     #return {"formations": [f.nomFormation for f in formations]}
     return  {"evaluations": [f for f in evaluations]}
+
+@app.post("/Evaluations/new")
+async def create_new_evaluation(idUtilisateur: int , idModuleDeFormation: int ,nomDeLEvaluation: str ,modaliteDeLEvaluation: str , dateDeDebutDeLEvaluation: str , dateDeFinDeLEvaluation: str , resultatNote: str ,resultatDate: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    evaluation = Evaluations(idUtilisateur=idUtilisateur, idModuleDeFormation=idModuleDeFormation, nomDeLEvaluation=nomDeLEvaluation, modaliteDeLEvaluation=modaliteDeLEvaluation, dateDeDebutDeLEvaluation=dateDeDebutDeLEvaluation, dateDeFinDeLEvaluation=dateDeFinDeLEvaluation, resultatNote=resultatNote, resultatDate=resultatDate)
+    session.add(evaluation)
+    session.commit()
+    return {"message": "Évaluation créée avec succès"}
+
+@app.patch("/Evaluations/patch")
+async def update_evaluation(idEvaluation: int , nomDeLEvaluation: str , modaliteDeLEvaluation: str , dateDeDebutDeLEvaluation: str , dateDeFinDeLEvaluation: str , resultatNote: str ,resultatDate: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    evaluation = session.query(Evaluations).filter(Evaluations.idEvaluation == idEvaluation).first()
+    if evaluation is None:
+        raise HTTPException(status_code=404, detail="Évaluation non trouvée")
+    evaluation.nomDeLEvaluation = nomDeLEvaluation
+    evaluation.modaliteDeLEvaluation = modaliteDeLEvaluation
+    evaluation.dateDeDebutDeLEvaluation = dateDeDebutDeLEvaluation
+    evaluation.dateDeFinDeLEvaluation = dateDeFinDeLEvaluation
+    evaluation.resultatNote = resultatNote
+    evaluation.resultatDate = resultatDate
+    session.commit()
+    return {"message": "Évaluation mise à jour avec succès"}
+
+@app.patch("/Evaluations/patch/resultat")
+async def update_evaluation_resultat(idEvaluation: int , resultatNote: str ,resultatDate: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    evaluation = session.query(Evaluations).filter(Evaluations.idEvaluation == idEvaluation).first()
+    if evaluation is None:
+        raise HTTPException(status_code=404, detail="Évaluation non trouvée")
+    evaluation.resultatNote = resultatNote
+    evaluation.resultatDate = resultatDate
+    session.commit()
+    return {"message": "Résultat de l'évaluation mis à jour avec succès"}
+
+@app.delete("/Evaluations/delete")
+async def delete_evaluation(idEvaluation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    evaluation = session.query(Evaluations).filter(Evaluations.idEvaluation == idEvaluation).first()
+    if evaluation is None:
+        raise HTTPException(status_code=404, detail="Évaluation non trouvée")
+    session.delete(evaluation)
+    session.commit()
+    return {"message": "Évaluation supprimée avec succès"}
 
 @app.post("/login")
 async def login(user_request: RequestLogin):
