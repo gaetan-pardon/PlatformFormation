@@ -43,6 +43,28 @@ async def create_new_formation(nomFormation: str , descriptionFormation: str , c
     session.commit()
     return {"message": "Formation créée avec succès"}
 
+@app.patch("/formations/patch")
+async def update_formation(idFormation: int , nomFormation: str , descriptionFormation: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    formation = session.query(Formation).filter(Formation.idFormation == idFormation).first()
+    if formation is None:
+        raise HTTPException(status_code=404, detail="Formation non trouvée")
+    formation.nomFormation = nomFormation
+    formation.descriptionFormation = descriptionFormation
+    session.commit()
+    return {"message": "Formation mise à jour avec succès"}
+
+@app.delete("/formations/delete")
+async def delete_formation(idFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    formation = session.query(Formation).filter(Formation.idFormation == idFormation).first()
+    if formation is None:
+        raise HTTPException(status_code=404, detail="Formation non trouvée")
+    session.delete(formation)
+    session.commit()
+    return {"message": "Formation supprimée avec succès"}
+
+
 @app.get("/SessionDeFormation/all")
 async def get_all_session_de_formation(current_user : str = Depends(get_current_user)):
     #print(f"Utilisateur connecté : {current_user}")
@@ -59,6 +81,28 @@ async def create_new_session_de_formation( idFormation: int , dateDeDebut: str ,
     session.add(sessionDeFormation)
     session.commit()
     return {"message": "Session de formation créée avec succès"}
+
+@app.patch("/SessionDeFormation/patch")
+async def update_session_de_formation(idSession: int , idFormation: int , dateDeDebut: str , dateDeFin: str , current_user : str = Depends(get_current_user)):
+    session = Session()
+    sessionDeFormation = session.query(SessionDeFormation).filter(SessionDeFormation.idSession == idSession).first()
+    if sessionDeFormation is None:
+        raise HTTPException(status_code=404, detail="Session de formation non trouvée")
+    sessionDeFormation.idFormation = idFormation
+    sessionDeFormation.dateDeDebut = dateDeDebut
+    sessionDeFormation.dateDeFin = dateDeFin
+    session.commit()
+    return {"message": "Session de formation mise à jour avec succès"}
+
+@app.delete("/SessionDeFormation/delete")
+async def delete_session_de_formation(idSession: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    sessionDeFormation = session.query(SessionDeFormation).filter(SessionDeFormation.idSession == idSession).first()
+    if sessionDeFormation is None:
+        raise HTTPException(status_code=404, detail="Session de formation non trouvée")
+    session.delete(sessionDeFormation)
+    session.commit()
+    return {"message": "Session de formation supprimée avec succès"}
 
 @app.get("/Utilisateur/all")
 async def get_all_utilisateurs(current_user : str = Depends(get_current_user)):
@@ -77,6 +121,29 @@ async def create_new_utilisateur(nomUtilisateur: str , prenomUtilisateur: str , 
     session.commit()
     return {"message": "Utilisateur créé avec succès"}
 
+@app.patch("/Utilisateur/patch")
+async def update_utilisateur(idUtilisateur: int , nomUtilisateur: str , prenomUtilisateur: str , INEUtilisateur: str , dateDeNaissance: str , idSession: int  , current_user : str = Depends(get_current_user)):
+    session = Session()
+    utilisateur = session.query(Utilisateur).filter(Utilisateur.idUtilisateur == idUtilisateur).first()
+    if utilisateur is None:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+    utilisateur.nomUtilisateur = nomUtilisateur
+    utilisateur.prenomUtilisateur = prenomUtilisateur
+    utilisateur.INEUtilisateur = INEUtilisateur
+    utilisateur.dateDeNaissance = dateDeNaissance
+    utilisateur.idSession = idSession
+    session.commit()
+    return {"message": "Utilisateur mis à jour avec succès"}
+
+@app.delete("/Utilisateur/delete")
+async def delete_utilisateur(idUtilisateur: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    utilisateur = session.query(Utilisateur).filter(Utilisateur.idUtilisateur == idUtilisateur).first()
+    if utilisateur is None:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+    session.delete(utilisateur)
+    session.commit()
+    return {"message": "Utilisateur supprimé avec succès"}
 
 
 @app.get("/RecommandationsGenereesparLIA/all")
@@ -96,6 +163,15 @@ async def create_new_recommandation(idUtilisateur: int , idFormation: int , curr
     session.commit()
     return {"message": "Recommandation créée avec succès"}
 
+@app.delete("/RecommandationsGenereesparLIA/delete")
+async def delete_recommandation(idUtilisateur: int , idFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    recommandation = session.query(RecommandationsGenereesparLIA).filter(RecommandationsGenereesparLIA.idUtilisateur == idUtilisateur, RecommandationsGenereesparLIA.idFormation == idFormation).first()
+    if recommandation is None:
+        raise HTTPException(status_code=404, detail="Recommandation non trouvée")
+    session.delete(recommandation)
+    session.commit()
+    return {"message": "Recommandation supprimée avec succès"}
 
 @app.get("/Inscription/all")
 async def get_all_inscriptions(current_user : str = Depends(get_current_user)):
@@ -113,6 +189,16 @@ async def create_new_inscription(idUtilisateur: int , idFormation: int , dateDIn
     session.add(inscription)
     session.commit()
     return {"message": "Inscription créée avec succès"}
+
+@app.delete("/Inscription/delete")
+async def delete_inscription(idUtilisateur: int , idFormation: int , current_user : str = Depends(get_current_user)):
+    session = Session()
+    inscription = session.query(Inscription).filter(Inscription.idUtilisateur == idUtilisateur, Inscription.idFormation == idFormation).first()
+    if inscription is None:
+        raise HTTPException(status_code=404, detail="Inscription non trouvée")
+    session.delete(inscription)
+    session.commit()
+    return {"message": "Inscription supprimée avec succès"}
 
 @app.get("/ModulesDeFormation/all")
 async def get_all_modules_de_formation(current_user : str = Depends(get_current_user)):

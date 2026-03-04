@@ -8,6 +8,9 @@ from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import sessionmaker, declarative_base
 #import pyodbc
 
+from dotenv import dotenv_values
+config = dotenv_values(".env")
+
 """
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "app.db"
@@ -17,10 +20,17 @@ Session = sessionmaker(bind=engine)
 session = Session()
 """
 
-SERVER = "localhost"
-DATABASE = "PlateformFormation"
+#SERVER = "localhost"
+SERVER = config["SERVER"]
+#DATABASE = "PlateformFormation"
+DATABASE = config["DATABASE"]
+#COMPTEDBB =  "gaetan"
+COMPTEDBB = config["COMPTEDBB"]
 
-DATABASE_URL = f"mssql+pyodbc://@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
+MPDDBB = config["MPDDBB"]
+
+#DATABASE_URL = f"mssql+pyodbc://@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
+DATABASE_URL = f"mssql+pyodbc://{COMPTEDBB}:{MPDDBB}@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
 Base = declarative_base()
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
