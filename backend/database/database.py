@@ -21,14 +21,22 @@ session = Session()
 """
 
 #SERVER = "localhost"
-SERVER = config["SERVER"]
+SERVER = os.getenv('DOCKER_APP_SERVER')
+if not SERVER:
+    SERVER = config["SERVER"]
 #DATABASE = "PlateformFormation"
-DATABASE = config["DATABASE"]
+DATABASE = os.getenv('DOCKER_APP_DATABASE' )
+if not DATABASE:
+    DATABASE = config["DATABASE"]
 #COMPTEDBB =  "gaetan"
-COMPTEDBB = config["COMPTEDBB"]
+COMPTEDBB = os.getenv('DOCKER_APP_COMPTEDBB')
+if not COMPTEDBB:
+    COMPTEDBB = config["COMPTEDBB"]
 
-MPDDBB = config["MPDDBB"]
-
+MPDDBB = os.getenv('DOCKER_APP_MPDDBB')
+if not MPDDBB:
+    MPDDBB = config["MPDDBB"]
+#print(f"SERVER: {SERVER}, DATABASE: {DATABASE}, COMPTEDBB: {COMPTEDBB}, MPDDBB: {MPDDBB}")
 #DATABASE_URL = f"mssql+pyodbc://@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
 DATABASE_URL = f"mssql+pyodbc://{COMPTEDBB}:{MPDDBB}@{SERVER}/{DATABASE}?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes&TrustServerCertificate=yes"
 Base = declarative_base()

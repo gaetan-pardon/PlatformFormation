@@ -10,11 +10,13 @@ from request.requestLogin import RequestLogin
 from datetime import datetime
 
 from dotenv import dotenv_values
-
+import os
 
 config = dotenv_values(".env")
 
-TOKEN_EXPIRE_MINUTES = int(config["TOKEN_EXPIRE_MINUTES"])
+TOKEN_EXPIRE_MINUTES = os.getenv('DOCKER_APP_TK_EX_MIN')
+if not TOKEN_EXPIRE_MINUTES:
+    TOKEN_EXPIRE_MINUTES = int(config["TOKEN_EXPIRE_MINUTES"])
 
 @app.get("/")
 async def root():
