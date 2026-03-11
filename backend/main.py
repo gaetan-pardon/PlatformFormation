@@ -11,12 +11,21 @@ from datetime import datetime
 
 from dotenv import dotenv_values
 import os
+import ldap3
 
 config = dotenv_values(".env")
 
 TOKEN_EXPIRE_MINUTES = os.getenv('DOCKER_APP_TK_EX_MIN')
 if not TOKEN_EXPIRE_MINUTES:
     TOKEN_EXPIRE_MINUTES = int(config["TOKEN_EXPIRE_MINUTES"])
+
+
+LDAP_SERVER= os.getenv('DOCKER_APP_LDAP_SERVER')
+if not LDAP_SERVER:
+    LDAP_SERVER = config["LDAP_SERVER"]
+
+#LDAP_SERVER = "192.168.170.10:389" #636
+
 
 @app.get("/")
 async def root():
@@ -322,14 +331,21 @@ async def delete_evaluation(idEvaluation: int , current_user : str = Depends(get
 
 @app.post("/login")
 async def login(user_request: RequestLogin):
-    #TODO: Mettre en place une veritable verification de mot de passe en attendant magic word : "magicword123"
-    if user_request.password != "magicword123":
-        raise HTTPException(status_code=401, detail="Invalid password")
-    token = create_access_token(email=user_request.email)
-
     
+    #print(f"Trying to connect to LDAP server at {LDAP_SERVER} with email {user_request.email}")
+    ldap_server = ldap3.Server(LDAP_SERVER,port=389, use_ssl=False, get_info=ldap3.ALL)
+
+    connectionldap = ldap3.Connection(ldap_server, user=user_request.email, password=user_request.password)
+    try:
+        connectionldap.bind()
+        #print(r)
+    except ldap3.core.exceptions.LDAPBindError as e:
+        raise HTTPException(status_code=401, detail="binding to LDAP server failed: " + str(e))
+    if not connectionldap.bound:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    token = create_access_token(email=user_request.email)
     response = JSONResponse(content="Login successful")
-    response.set_cookie(key="access_token", value=token, httponly=True , max_age=TOKEN_EXPIRE_MINUTES* 60000)
+    response.set_cookie(key="access_token", value=token, httponly=True , max_age=TOKEN_EXPIRE_MINUTES* 60)
     return response
 
 @app.post("/logout")

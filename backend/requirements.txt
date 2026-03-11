@@ -6,3 +6,4 @@ pydantic
 pyodbc
 python-jose
 pydantic[email]
+ldap3
