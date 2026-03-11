@@ -348,7 +348,7 @@ async def login(user_request: RequestLogin):
     response.set_cookie(key="access_token", value=token, httponly=True , max_age=TOKEN_EXPIRE_MINUTES* 60)
     return response
 
-@app.post("/logout")
+@app.get("/logout")
 async def logout():
     response = JSONResponse(content="Logout successful")
     response.delete_cookie(key="access_token")
